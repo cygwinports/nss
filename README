@@ -1,0 +1,172 @@
+nss
+------------------------------------------
+Network Security Services (NSS) is a set of libraries designed to 
+support cross-platform development of security-enabled client and server 
+applications. Applications built with NSS can support SSL v2 and v3, 
+TLS, PKCS #5, PKCS #7, PKCS #11, PKCS #12, S/MIME, X.509 v3 
+certificates, and other security standards.
+
+Runtime requirements:
+  cygwin-1.5.24-2
+  libnspr4-4.6.6-2
+
+Build requirements:
+(besides corresponding -devel packages)
+  cygwin-1.5.24-2
+  binutils-20060817-1
+  cygport-0.3.1-1
+  gawk-3.1.5-4
+  gcc-core-3.4.4-3
+  make-3.81-1
+  sed-4.1.5-2
+
+Canonical website:
+  http://www.mozilla.org/projects/security/pki/nss/
+
+Canonical download:
+  ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/
+
+-------------------------------------------
+
+Build instructions:
+  unpack nss-3.11.5-X-src.tar.bz2
+    if you use setup to install this src package, it will be
+	 unpacked under /usr/src automatically
+  cd /usr/src
+  cygport ./nss-3.11.5-X.cygport all
+
+This will create:
+  /usr/src/nss-3.11.5-X-src.tar.bz2
+  /usr/src/nss-3.11.5-X.tar.bz2
+  /usr/src/libnss3-3.11.5-X.tar.bz2
+  /usr/src/libnss-devel-3.11.5-X.tar.bz2
+
+-------------------------------------------
+
+Files included in the binary packages:
+
+(nss)
+  /usr/bin/certutil.exe
+  /usr/bin/modutil.exe
+  /usr/bin/pk12util.exe
+  /usr/bin/signtool.exe
+  /usr/bin/ssltap.exe
+  /usr/lib/nss/cygnssckbi.dll
+  /usr/share/doc/Cygwin/nss-3.11.5.README
+
+(libnss3)
+  /usr/bin/cygfreebl3.dll
+  /usr/bin/cygnss3.dll
+  /usr/bin/cygsmime3.dll
+  /usr/bin/cygsoftokn3.dll
+  /usr/bin/cygssl3.dll
+
+(libnss-devel)
+  /usr/bin/nss-config
+  /usr/include/nss/base64.h
+  /usr/include/nss/blapit.h
+  /usr/include/nss/cert.h
+  /usr/include/nss/certdb.h
+  /usr/include/nss/certt.h
+  /usr/include/nss/ciferfam.h
+  /usr/include/nss/cmmf.h
+  /usr/include/nss/cmmft.h
+  /usr/include/nss/cms.h
+  /usr/include/nss/cmsreclist.h
+  /usr/include/nss/cmst.h
+  /usr/include/nss/crmf.h
+  /usr/include/nss/crmft.h
+  /usr/include/nss/cryptohi.h
+  /usr/include/nss/cryptoht.h
+  /usr/include/nss/ecl-exp.h
+  /usr/include/nss/hasht.h
+  /usr/include/nss/jar-ds.h
+  /usr/include/nss/jar.h
+  /usr/include/nss/jarfile.h
+  /usr/include/nss/key.h
+  /usr/include/nss/keyhi.h
+  /usr/include/nss/keyt.h
+  /usr/include/nss/keythi.h
+  /usr/include/nss/nss.h
+  /usr/include/nss/nssb64.h
+  /usr/include/nss/nssb64t.h
+  /usr/include/nss/nssbase.h
+  /usr/include/nss/nssbaset.h
+  /usr/include/nss/nssckbi.h
+  /usr/include/nss/nssckepv.h
+  /usr/include/nss/nssckft.h
+  /usr/include/nss/nssckfw.h
+  /usr/include/nss/nssckfwc.h
+  /usr/include/nss/nssckfwt.h
+  /usr/include/nss/nssckg.h
+  /usr/include/nss/nssckmdt.h
+  /usr/include/nss/nssckt.h
+  /usr/include/nss/nssilckt.h
+  /usr/include/nss/nssilock.h
+  /usr/include/nss/nsslocks.h
+  /usr/include/nss/nssrwlk.h
+  /usr/include/nss/nssrwlkt.h
+  /usr/include/nss/ocsp.h
+  /usr/include/nss/ocspt.h
+  /usr/include/nss/p12.h
+  /usr/include/nss/p12plcy.h
+  /usr/include/nss/p12t.h
+  /usr/include/nss/pk11func.h
+  /usr/include/nss/pk11pqg.h
+  /usr/include/nss/pk11priv.h
+  /usr/include/nss/pk11pub.h
+  /usr/include/nss/pk11sdr.h
+  /usr/include/nss/pkcs11.h
+  /usr/include/nss/pkcs11f.h
+  /usr/include/nss/pkcs11n.h
+  /usr/include/nss/pkcs11p.h
+  /usr/include/nss/pkcs11t.h
+  /usr/include/nss/pkcs11u.h
+  /usr/include/nss/pkcs12.h
+  /usr/include/nss/pkcs12t.h
+  /usr/include/nss/pkcs7t.h
+  /usr/include/nss/portreg.h
+  /usr/include/nss/preenc.h
+  /usr/include/nss/secasn1.h
+  /usr/include/nss/secasn1t.h
+  /usr/include/nss/seccomon.h
+  /usr/include/nss/secder.h
+  /usr/include/nss/secdert.h
+  /usr/include/nss/secdig.h
+  /usr/include/nss/secdigt.h
+  /usr/include/nss/secerr.h
+  /usr/include/nss/sechash.h
+  /usr/include/nss/secitem.h
+  /usr/include/nss/secmime.h
+  /usr/include/nss/secmod.h
+  /usr/include/nss/secmodt.h
+  /usr/include/nss/secoid.h
+  /usr/include/nss/secoidt.h
+  /usr/include/nss/secpkcs5.h
+  /usr/include/nss/secpkcs7.h
+  /usr/include/nss/secport.h
+  /usr/include/nss/shsign.h
+  /usr/include/nss/smime.h
+  /usr/include/nss/ssl.h
+  /usr/include/nss/sslerr.h
+  /usr/include/nss/sslproto.h
+  /usr/include/nss/sslt.h
+  /usr/include/nss/watcomfx.h
+  /usr/lib/nss/libcrmf.a
+  /usr/lib/nss/libfreebl3.dll.a
+  /usr/lib/nss/libnss3.dll.a
+  /usr/lib/nss/libsmime3.dll.a
+  /usr/lib/nss/libsoftokn3.dll.a
+  /usr/lib/nss/libssl3.dll.a
+  /usr/lib/pkgconfig/nss.pc
+
+------------------
+
+Port Notes:
+
+----- version 3.11.5-1 -----
+Initial release for Cygwin.
+
+
+Cygwin port maintained by:
+http://cygwinports.dotsrc.org/
