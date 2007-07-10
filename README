@@ -29,17 +29,17 @@ Canonical download:
 -------------------------------------------
 
 Build instructions:
-  unpack nss-3.11.5-X-src.tar.bz2
+  unpack nss-3.11.6-X-src.tar.bz2
     if you use setup to install this src package, it will be
 	 unpacked under /usr/src automatically
   cd /usr/src
-  cygport ./nss-3.11.5-X.cygport all
+  cygport ./nss-3.11.6-X.cygport all
 
 This will create:
-  /usr/src/nss-3.11.5-X-src.tar.bz2
-  /usr/src/nss-3.11.5-X.tar.bz2
-  /usr/src/libnss3-3.11.5-X.tar.bz2
-  /usr/src/libnss-devel-3.11.5-X.tar.bz2
+  /usr/src/nss-3.11.6-X-src.tar.bz2
+  /usr/src/nss-3.11.6-X.tar.bz2
+  /usr/src/libnss3-3.11.6-X.tar.bz2
+  /usr/src/libnss-devel-3.11.6-X.tar.bz2
 
 -------------------------------------------
 
@@ -52,7 +52,7 @@ Files included in the binary packages:
   /usr/bin/signtool.exe
   /usr/bin/ssltap.exe
   /usr/lib/nss/cygnssckbi.dll
-  /usr/share/doc/Cygwin/nss-3.11.5.README
+  /usr/share/doc/Cygwin/nss-3.11.6.README
 
 (libnss3)
   /usr/bin/cygfreebl3.dll
@@ -163,6 +163,9 @@ Files included in the binary packages:
 ------------------
 
 Port Notes:
+
+----- version 3.11.6-1 -----
+Version bump.
 
 ----- version 3.11.5-1 -----
 Initial release for Cygwin.
