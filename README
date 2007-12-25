@@ -8,13 +8,13 @@ certificates, and other security standards.
 
 Runtime requirements:
   cygwin-1.5.24-2
-  libnspr4-4.6.6-2
+  libnspr4-4.6.7-1
 
 Build requirements:
 (besides corresponding -devel packages)
   cygwin-1.5.24-2
   binutils-20060817-1
-  cygport-0.3.1-1
+  cygport-0.3.7-1
   gawk-3.1.5-4
   gcc-core-3.4.4-3
   make-3.81-1
@@ -29,17 +29,17 @@ Canonical download:
 -------------------------------------------
 
 Build instructions:
-  unpack nss-3.11.6-X-src.tar.bz2
+  unpack nss-3.11.7-X-src.tar.bz2
     if you use setup to install this src package, it will be
 	 unpacked under /usr/src automatically
   cd /usr/src
-  cygport ./nss-3.11.6-X.cygport all
+  cygport ./nss-3.11.7-X.cygport all
 
 This will create:
-  /usr/src/nss-3.11.6-X-src.tar.bz2
-  /usr/src/nss-3.11.6-X.tar.bz2
-  /usr/src/libnss3-3.11.6-X.tar.bz2
-  /usr/src/libnss-devel-3.11.6-X.tar.bz2
+  /usr/src/nss-3.11.7-X-src.tar.bz2
+  /usr/src/nss-3.11.7-X.tar.bz2
+  /usr/src/libnss3-3.11.7-X.tar.bz2
+  /usr/src/libnss-devel-3.11.7-X.tar.bz2
 
 -------------------------------------------
 
@@ -52,7 +52,7 @@ Files included in the binary packages:
   /usr/bin/signtool.exe
   /usr/bin/ssltap.exe
   /usr/lib/nss/cygnssckbi.dll
-  /usr/share/doc/Cygwin/nss-3.11.6.README
+  /usr/share/doc/Cygwin/nss-3.11.7.README
 
 (libnss3)
   /usr/bin/cygfreebl3.dll
@@ -163,6 +163,9 @@ Files included in the binary packages:
 ------------------
 
 Port Notes:
+
+----- version 3.11.7-1 -----
+Version bump.
 
 ----- version 3.11.6-1 -----
 Version bump.
