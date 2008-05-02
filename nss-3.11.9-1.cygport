@@ -1,0 +1,59 @@
+DESCRIPTION="Netscape Network Security Services"
+HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
+SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz
+         nss-config.in
+         nss.pc.in"
+
+PKG_NAMES="${PN} lib${PN}3 lib${PN}-devel"
+PKG_HINTS="setup lib devel"
+PKG_CONTENTS[0]='usr/bin/*.exe usr/lib/nss/*.dll usr/share/doc/'
+PKG_CONTENTS[1]='usr/bin/*.dll'
+PKG_CONTENTS[2]="usr/bin/${PN}-config usr/include/ usr/lib/nss/*.a usr/lib/pkgconfig/"
+
+MOZ_SRC_DIR="mozilla/security"
+MAKEOPTS+=' -j1 BUILD_OPT=1'
+
+src_compile() {
+	lndirs
+	for d in coreconf dbm nss
+	do
+		cd ${B}/${MOZ_SRC_DIR}/${d}
+		cygmake
+	done
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@includedir@,\$\{prefix}/include/nss,g" \
+		-e "s,@libdir@,/usr/lib/nss,g" \
+		-e "s,@MOD_MAJOR_VERSION@,${PVP[0]},g" \
+		-e "s,@NSS_VERSION@,${PV},g" \
+		-e "s,@NSPR_CFLAGS@,`nspr-config --cflags`,g" \
+		-e "s,@NSPR_LIBS@,`nspr-config --libs`,g" \
+		${S}/nss-config.in > ${T}/nss-config
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@includedir@,\$\{prefix}/include/nss," \
+		-e "s,@libdir@,/usr/lib/nss,g" \
+		-e "s,@NSPR_VERSION@,`nspr-config --version`,g" \
+		-e "s,@NSS_VERSION@,${PV},g" \
+		${S}/nss.pc.in > ${T}/nss.pc
+}
+
+src_install() {
+	cd ${B}/${MOZ_SRC_DIR}/../dist
+
+	dobin CYGWIN*/bin/{certutil,modutil,pk12util,signtool,ssltap}.exe
+	dobin CYGWIN*/lib/*${PVP[0]}.dll
+	dobin ${T}/nss-config
+
+	insinto /usr/lib/${PN}
+	doins CYGWIN*/lib/*${PVP[0]}.dll.a CYGWIN*/lib/libcrmf.a
+
+	exeinto /usr/lib/${PN}
+	doexe CYGWIN*/lib/*[a-z].dll
+
+	insinto /usr/include/${PN}
+	doins public/nss/*.h
+
+	insinto /usr/lib/pkgconfig
+	doins ${T}/nss.pc
+}
