@@ -1,5 +1,5 @@
 --- origsrc/mozilla/dbm/include/mcom_db.h	2005-09-22 05:38:06.000000000 -0500
-+++ src/mozilla/dbm/include/mcom_db.h	2008-12-31 22:22:57.940625000 -0600
++++ src/mozilla/dbm/include/mcom_db.h	2009-04-12 12:56:34.917492000 -0500
 @@ -59,7 +59,7 @@
  #include <sys/byteorder.h>
  #endif
@@ -21,7 +21,7 @@
  typedef uint32	pgno_t;
  #endif
 --- origsrc/mozilla/security/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
-+++ src/mozilla/security/coreconf/CYGWIN.mk	2008-12-31 22:22:57.956250000 -0600
++++ src/mozilla/security/coreconf/CYGWIN.mk	2009-04-12 12:56:34.917492000 -0500
 @@ -0,0 +1,134 @@
 +#
 +# ***** BEGIN LICENSE BLOCK *****
@@ -158,7 +158,7 @@
 +	TARGETS = $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM)
 +endif
 --- origsrc/mozilla/security/coreconf/arch.mk	2007-11-14 16:49:43.000000000 -0600
-+++ src/mozilla/security/coreconf/arch.mk	2008-12-31 22:22:57.956250000 -0600
++++ src/mozilla/security/coreconf/arch.mk	2009-04-12 12:56:34.933117000 -0500
 @@ -257,7 +257,7 @@ endif
  #
  ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$(OS_ARCH)))
@@ -169,7 +169,7 @@
      ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
          OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
 --- origsrc/mozilla/security/coreconf/config.mk	2008-05-09 18:55:54.000000000 -0500
-+++ src/mozilla/security/coreconf/config.mk	2008-12-31 22:21:40.737500000 -0600
++++ src/mozilla/security/coreconf/config.mk	2009-04-12 12:56:34.933117000 -0500
 @@ -63,7 +63,7 @@ endif
  #######################################################################
  
@@ -180,7 +180,7 @@
  ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
  include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
 --- origsrc/mozilla/security/nss/cmd/shlibsign/sign.sh	2006-01-18 14:56:28.000000000 -0600
-+++ src/mozilla/security/nss/cmd/shlibsign/sign.sh	2008-12-31 22:22:57.971875000 -0600
++++ src/mozilla/security/nss/cmd/shlibsign/sign.sh	2009-04-12 12:56:34.948742000 -0500
 @@ -1,5 +1,13 @@
  #!/bin/sh
  case "${3}" in
@@ -196,7 +196,7 @@
      if echo "${PATH}" | grep -c \; >/dev/null; then
          PATH=${1}/lib\;${1}/bin\;${4}\;${PATH}
 --- origsrc/mozilla/security/nss/lib/ckfw/builtins/config.mk	2005-01-19 20:25:46.000000000 -0600
-+++ src/mozilla/security/nss/lib/ckfw/builtins/config.mk	2008-12-31 22:22:57.987500000 -0600
++++ src/mozilla/security/nss/lib/ckfw/builtins/config.mk	2009-04-12 12:56:34.948742000 -0500
 @@ -43,7 +43,6 @@ CONFIG_CVS_ID = "@(#) $RCSfile: config.m
  
  TARGETS        = $(SHARED_LIBRARY)
@@ -205,19 +205,8 @@
  PROGRAM        =
  
  ifeq (,$(filter-out WIN%,$(OS_TARGET)))
---- origsrc/mozilla/security/nss/lib/cryptohi/hasht.h	2005-11-07 12:44:20.000000000 -0600
-+++ src/mozilla/security/nss/lib/cryptohi/hasht.h	2009-01-04 18:20:41.735875000 -0600
-@@ -84,7 +84,7 @@ struct SECHashObjectStr {
- };
- 
- struct HASHContextStr {
--    const struct SECHashObjectStr *hashobj;
-+    struct SECHashObjectStr *hashobj;
-     void *hash_context;
- };
- 
 --- origsrc/mozilla/security/nss/lib/freebl/config.mk	2008-10-03 14:40:50.000000000 -0500
-+++ src/mozilla/security/nss/lib/freebl/config.mk	2008-12-31 22:22:58.018750000 -0600
++++ src/mozilla/security/nss/lib/freebl/config.mk	2009-04-12 12:56:34.964367000 -0500
 @@ -70,7 +70,6 @@ else
  
  TARGETS      = $(SHARED_LIBRARY)
@@ -227,7 +216,7 @@
  
  ifeq ($(OS_TARGET), SunOS)
 --- origsrc/mozilla/security/nss/lib/freebl/unix_rand.c	2008-05-09 18:56:02.000000000 -0500
-+++ src/mozilla/security/nss/lib/freebl/unix_rand.c	2008-12-31 23:00:35.237500000 -0600
++++ src/mozilla/security/nss/lib/freebl/unix_rand.c	2009-04-12 12:56:34.964367000 -0500
 @@ -186,7 +186,7 @@ static SECStatus RNG_kstat(PRUint32* fed
  
  #if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) \
@@ -237,54 +226,3 @@
  #include <sys/times.h>
  
  #define getdtablesize() sysconf(_SC_OPEN_MAX)
-@@ -212,8 +212,10 @@ GiveSystemInfo(void)
-     si = sysconf(_SC_CHILD_MAX);
-     RNG_RandomUpdate(&si, sizeof(si));
- 
-+#if defined(_SC_STREAM_MAX)
-     si = sysconf(_SC_STREAM_MAX);
-     RNG_RandomUpdate(&si, sizeof(si));
-+#endif
- 
-     si = sysconf(_SC_OPEN_MAX);
-     RNG_RandomUpdate(&si, sizeof(si));
---- origsrc/mozilla/security/nss/lib/pki1/atav.c	2005-01-19 20:25:49.000000000 -0600
-+++ src/mozilla/security/nss/lib/pki1/atav.c	2009-01-04 17:36:24.517125000 -0600
-@@ -684,7 +684,7 @@ struct nss_attribute_data_str {
-   PRUint32 maxStringLength; /* zero for no limit */
- };
- 
--static const struct nss_attribute_data_str nss_attribute_data[] = {
-+static struct nss_attribute_data_str nss_attribute_data[] = {
-   { &NSS_OID_X520_NAME,                     
-     nssStringType_DirectoryString, 1, 32768 },
-   { &NSS_OID_X520_COMMON_NAME,              
---- origsrc/mozilla/security/nss/lib/ssl/ssl3ext.c	2008-10-06 17:04:15.000000000 -0500
-+++ src/mozilla/security/nss/lib/ssl/ssl3ext.c	2009-01-04 18:58:22.689000000 -0600
-@@ -222,7 +222,7 @@ ssl3_GetSessionTicketKeys(const unsigned
-  * In the second generation, this table will be dynamic, and functions
-  * will be registered here.
-  */
--static const ssl3HelloExtensionHandler clientHelloHandlers[] = {
-+static ssl3HelloExtensionHandler clientHelloHandlers[] = {
-     { server_name_xtn, &ssl3_HandleServerNameXtn },
- #ifdef NSS_ENABLE_ECC
-     { elliptic_curves_xtn, &ssl3_HandleSupportedCurvesXtn },
-@@ -232,7 +232,7 @@ static const ssl3HelloExtensionHandler c
-     { -1, NULL }
- };
- 
--static const ssl3HelloExtensionHandler serverHelloHandlers[] = {
-+static ssl3HelloExtensionHandler serverHelloHandlers[] = {
-     { server_name_xtn, &ssl3_HandleServerNameXtn },
-     /* TODO: add a handler for ec_point_formats_xtn */
-     { session_ticket_xtn, &ssl3_ClientHandleSessionTicketXtn },
-@@ -244,7 +244,7 @@ static const ssl3HelloExtensionHandler s
-  * The server's table of hello senders is dynamic, in the socket struct,
-  * and sender functions are registered there.
-  */
--static const 
-+static
- ssl3HelloExtensionSender clientHelloSenders[MAX_EXTENSIONS] = {
-     { server_name_xtn, &ssl3_SendServerNameXtn },
- #ifdef NSS_ENABLE_ECC

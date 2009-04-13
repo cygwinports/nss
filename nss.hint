@@ -1,7 +1,6 @@
-category: Net Libs
-requires: cygwin libnspr-devel libnss3
-external-source: nss
-sdesc: "Mozilla Network Security Services (development)"
+category: Utils
+requires: cygwin libgcc1 libnspr4 libnss3 libsqlite3_0
+sdesc: "Mozilla Network Security Services (tools)"
 ldesc: "Network Security Services (NSS) is a set of libraries designed 
 to support cross-platform development of security-enabled client and 
 server applications. Applications built with NSS can support SSL v2 and 

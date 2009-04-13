@@ -1,0 +1,74 @@
+DESCRIPTION="Netscape Network Security Services"
+HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
+#SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz"
+SRC_URI="
+	mirror://gentoo/${P}.tar.bz2
+	mirror://portage/dev-libs/${PN}/files/3.12-nss-config.in
+	mirror://portage/dev-libs/${PN}/files/3.12-nss.pc.in
+"
+PATCH_URI="3.12.2-cygwin.patch"
+
+SRC_DIR=.
+
+PKG_NAMES="${PN} lib${PN}3 lib${PN}-devel"
+nss_CONTENTS='--exclude=*.a usr/bin/*.exe usr/lib/nss/* usr/share/doc/'
+libnss3_CONTENTS='usr/bin/*.dll'
+libnss_devel_CONTENTS="usr/bin/${PN}-config usr/include/ usr/lib/*.a usr/lib/nss/*.a usr/lib/pkgconfig/"
+
+MOZ_SRC_DIR="mozilla/security"
+MAKEOPTS+=' -j1 BUILD_OPT=1'
+
+src_compile() {
+	lndirs
+
+	export NSS_USE_SYSTEM_SQLITE=1
+
+	export PATH="${B}/mozilla/dist/CYGWIN5.1_gcc-4_PTH_OPT.OBJ/lib:$PATH"
+
+	for d in coreconf dbm nss
+	do
+		cd ${B}/${MOZ_SRC_DIR}/${d}
+		cygmake CC="${CC}"
+	done
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@exec_prefix@,/usr,g" \
+		-e "s,@includedir@,/usr/include/nss,g" \
+		-e "s,@libdir@,/usr/lib,g" \
+		-e 's|-Wl,-R$libdir ||g' \
+		-e "s,@MOD_MAJOR_VERSION@,${PV[1]},g" \
+		-e "s,@MOD_MINOR_VERSION@,${PV[2]},g" \
+		-e "s,@MOD_PATCH_VERSION@,${PV[3]},g" \
+		${S}/3.12-nss-config.in > ${B}/nss-config
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@exec_prefix@,/usr,g" \
+		-e "s,@includedir@,/usr/include/nss," \
+		-e "s,@libdir@,/usr/lib,g" \
+		-e 's|-Wl,-R${libdir}||g' \
+		-e "s,@NSPR_VERSION@,`nspr-config --version`,g" \
+		-e "s,@NSS_VERSION@,${PV},g" \
+		${S}/3.12-nss.pc.in > ${B}/nss.pc
+}
+
+src_install() {
+	cd ${B}/mozilla/dist
+
+	dobin CYGWIN*/bin/{certutil,modutil,pk12util,shlibsign,signtool,ssltap}.exe
+	dobin CYGWIN*/lib/cyg{nss,nssutil,smime,ssl}3.dll
+	dobin ${B}/nss-config
+
+	dolib CYGWIN*/lib/lib{nss,nssutil,smime,ssl}3.dll.a
+
+	insinto /usr/lib/${PN}
+	doins CYGWIN*/lib/libcrmf.a CYGWIN*/lib/*.chk
+
+	exeinto /usr/lib/${PN}
+	doexe CYGWIN*/lib/cyg{freebl3,nssckbi,nssdbm3,softokn3}.dll
+
+	insinto /usr/include/${PN}
+	doins public/nss/*.h
+
+	insinto /usr/lib/pkgconfig
+	doins ${B}/nss.pc
+}

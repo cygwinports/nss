@@ -7,16 +7,18 @@ TLS, PKCS #5, PKCS #7, PKCS #11, PKCS #12, S/MIME, X.509 v3
 certificates, and other security standards.
 
 Runtime requirements:
-  cygwin-1.5.25-11
-  libnspr4-4.6.8-1
+  cygwin-1.7.0-45
+  libgcc1-4.3.2-2
+  libnspr4-4.7.4-1
+  libsqlite3_0-3.6.11-1
 
 Build requirements:
 (besides corresponding -devel packages)
-  binutils-20060817-1
-  cygport-0.3.9-1
-  gawk-3.1.6-1
-  gcc-core-3.4.4-3
-  make-3.81-1
+  binutils-20080624-2
+  cygport-0.9.6-1
+  gawk-3.1.6-2
+  gcc4-core-4.3.2-2
+  make-3.81-2
   sed-4.1.5-2
 
 Canonical website:
@@ -28,17 +30,17 @@ Canonical download:
 -------------------------------------------
 
 Build instructions:
-  unpack nss-3.11.9-X-src.tar.bz2
+  unpack nss-3.12.2-X-src.tar.bz2
     if you use setup to install this src package, it will be
 	 unpacked under /usr/src automatically
   cd /usr/src
-  cygport ./nss-3.11.9-X.cygport all
+  cygport ./nss-3.12.2-X.cygport all
 
 This will create:
-  /usr/src/nss-3.11.9-X-src.tar.bz2
-  /usr/src/nss-3.11.9-X.tar.bz2
-  /usr/src/libnss3-3.11.9-X.tar.bz2
-  /usr/src/libnss-devel-3.11.9-X.tar.bz2
+  /usr/src/nss-3.12.2-X-src.tar.bz2
+  /usr/src/nss-3.12.2-X.tar.bz2
+  /usr/src/libnss-devel-3.12.2-X.tar.bz2
+  /usr/src/libnss3-3.12.2-X.tar.bz2
 
 -------------------------------------------
 
@@ -48,16 +50,20 @@ Files included in the binary packages:
   /usr/bin/certutil.exe
   /usr/bin/modutil.exe
   /usr/bin/pk12util.exe
+  /usr/bin/shlibsign.exe
   /usr/bin/signtool.exe
   /usr/bin/ssltap.exe
+  /usr/lib/nss/cygfreebl3.chk
+  /usr/lib/nss/cygfreebl3.dll
   /usr/lib/nss/cygnssckbi.dll
-  /usr/share/doc/Cygwin/nss-3.11.9.README
+  /usr/lib/nss/cygnssdbm3.dll
+  /usr/lib/nss/cygsoftokn3.chk
+  /usr/lib/nss/cygsoftokn3.dll
 
 (libnss3)
-  /usr/bin/cygfreebl3.dll
   /usr/bin/cygnss3.dll
+  /usr/bin/cygnssutil3.dll
   /usr/bin/cygsmime3.dll
-  /usr/bin/cygsoftokn3.dll
   /usr/bin/cygssl3.dll
 
 (libnss-devel)
@@ -150,30 +156,21 @@ Files included in the binary packages:
   /usr/include/nss/sslerr.h
   /usr/include/nss/sslproto.h
   /usr/include/nss/sslt.h
+  /usr/include/nss/utilrename.h
   /usr/include/nss/watcomfx.h
+  /usr/lib/libnss3.dll.a
+  /usr/lib/libnssutil3.dll.a
+  /usr/lib/libsmime3.dll.a
+  /usr/lib/libssl3.dll.a
   /usr/lib/nss/libcrmf.a
-  /usr/lib/nss/libfreebl3.dll.a
-  /usr/lib/nss/libnss3.dll.a
-  /usr/lib/nss/libsmime3.dll.a
-  /usr/lib/nss/libsoftokn3.dll.a
-  /usr/lib/nss/libssl3.dll.a
   /usr/lib/pkgconfig/nss.pc
 
 ------------------
 
 Port Notes:
 
------ version 3.11.9-1 -----
-Version bump.
-
------ version 3.11.7-1 -----
-Version bump.
-
------ version 3.11.6-1 -----
-Version bump.
-
------ version 3.11.5-1 -----
-Initial release for Cygwin.
+----- version 3.12.2-1 -----
+Initial release for Cygwin 1.7.
 
 
 Cygwin port maintained by:
