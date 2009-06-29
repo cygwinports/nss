@@ -1,5 +1,5 @@
 category: Libs
-requires: cygwin libnspr-devel libnss3
+requires: libnspr-devel libnss3
 external-source: nss
 sdesc: "Mozilla Network Security Services (development)"
 ldesc: "Network Security Services (NSS) is a set of libraries designed 
