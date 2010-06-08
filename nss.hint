@@ -1,5 +1,5 @@
 category: Utils
-requires: libgcc1 libnspr4 libnss3 libsqlite3_0
+requires: libgcc1 libnspr4 libnss3
 sdesc: "Mozilla Network Security Services (tools)"
 ldesc: "Network Security Services (NSS) is a set of libraries designed 
 to support cross-platform development of security-enabled client and 

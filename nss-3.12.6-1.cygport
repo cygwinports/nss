@@ -1,0 +1,90 @@
+DESCRIPTION="Netscape Network Security Services"
+HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
+SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz
+	mirror://portage/dev-libs/${PN}/files/3.12-nss-config.in
+	mirror://portage/dev-libs/${PN}/files/3.12-nss.pc.in
+"
+PATCH_URI="3.12.6-cygwin.patch
+           3.12.6-uint.patch"
+
+PKG_NAMES="${PN} lib${PN}3 lib${PN}-devel"
+nss_CONTENTS='--exclude=*.a usr/bin/*.exe usr/share/doc/'
+libnss3_CONTENTS="usr/bin/cyg*"
+libnss_devel_CONTENTS="usr/bin/${PN}-config usr/include/ usr/lib/"
+
+MOZ_SRC_DIR="mozilla/security"
+MAKEOPTS+=' -j1' # BUILD_OPT=1'
+
+src_compile() {
+	lndirs
+
+	cd ${B}/mozilla/security
+
+	mkdir -p coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ
+	cat > coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe.manifest <<-_EOF
+	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+	 <assemblyIdentity version="1.0.0.0"
+	  processorArchitecture="X86"
+	  name="Cygwin.nss.nsinstall"
+	  type="win32"/>
+	 <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+	  <security>
+	   <requestedPrivileges>
+	    <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+	   </requestedPrivileges>
+	  </security>
+	 </trustInfo>
+	</assembly>
+	_EOF
+	chmod +x coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe.manifest
+
+	export NSS_USE_SYSTEM_SQLITE=1
+	export PATH="${B}/mozilla/dist/CYGWIN6.1_PTH_DBG.OBJ/lib:$PATH"
+
+	for d in coreconf dbm nss
+	do
+		pushd ${d}
+		cygmake CC="${CC}"
+		popd
+	done
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@exec_prefix@,/usr,g" \
+		-e "s,@includedir@,/usr/include/nss,g" \
+		-e "s,@libdir@,/usr/lib,g" \
+		-e 's|-Wl,-R$libdir ||g' \
+		-e "s,@MOD_MAJOR_VERSION@,${PV[1]},g" \
+		-e "s,@MOD_MINOR_VERSION@,${PV[2]},g" \
+		-e "s,@MOD_PATCH_VERSION@,${PV[3]},g" \
+		${S}/3.12-nss-config.in > ${B}/mozilla/dist/nss-config
+
+	sed -e "s,@prefix@,/usr,g" \
+		-e "s,@exec_prefix@,/usr,g" \
+		-e "s,@includedir@,/usr/include/nss," \
+		-e "s,@libdir@,/usr/lib,g" \
+		-e 's|-Wl,-R${libdir}||g' \
+		-e "s,@NSPR_VERSION@,`nspr-config --version`,g" \
+		-e "s,@NSS_VERSION@,${PV},g" \
+		${S}/3.12-nss.pc.in > ${B}/mozilla/dist/nss.pc
+}
+
+src_install() {
+	cd ${B}/mozilla/dist
+
+	dobin CYGWIN*/bin/{cert,cms,crl,mod,pk12}util.exe
+    dobin CYGWIN*/bin/{shlibsign,signtool,signver,ssltap}.exe
+	dobin CYGWIN*/lib/*.dll
+	dobin nss-config
+
+	insinto /usr/bin
+	doins CYGWIN*/lib/*.chk
+
+	dolib CYGWIN*/lib/*.dll.a CYGWIN*/lib/libcrmf.a
+
+	insinto /usr/include/${PN}
+	doins public/nss/*.h
+
+	insinto /usr/lib/pkgconfig
+	doins nss.pc
+}

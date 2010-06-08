@@ -1,5 +1,5 @@
 category: Libs
-requires: libgcc1 libnspr4
+requires: libgcc1 libnspr4 libsqlite3_0
 external-source: nss
 sdesc: "Mozilla Network Security Services (libraries)"
 ldesc: "Network Security Services (NSS) is a set of libraries designed 
