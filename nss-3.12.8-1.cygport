@@ -87,4 +87,6 @@ src_install() {
 
 	insinto /usr/lib/pkgconfig
 	doins nss.pc
+
+	dodoc ../security/nss/trademarks.txt
 }
