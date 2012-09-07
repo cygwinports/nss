@@ -1,17 +1,27 @@
-DESCRIPTION="Netscape Network Security Services"
+NAME="nss"
+VERSION=3.13.6
+RELEASE=1
+CATEGORY="Utils"
+SUMMARY="Netscape Network Security Services"
+DESCRIPTION="Network Security Services (NSS) is a set of libraries designed
+to support cross-platform development of security-enabled client and server
+applications. Applications built with NSS can support SSL v2 and v3, TLS,
+PKCS#5, PKCS#7, PKCS#11, PKCS#12, S/MIME, X.509 v3 certificates, and other
+security standards."
 HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
 SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz
 	mirror://portage/dev-libs/${PN}/files/3.12-nss-config.in
 	mirror://portage/dev-libs/${PN}/files/3.12-nss.pc.in
 "
 PATCH_URI="
-	mirror://portage/dev-libs/${PN}/files/${P}-CVE-2011-3640.patch
 	3.12.6-cygwin.patch
 "
 
 PKG_NAMES="${PN} lib${PN}3 lib${PN}-devel"
 nss_CONTENTS='--exclude=*.a usr/bin/*.exe usr/share/doc/'
+libnss3_CATEGORY="Libs"
 libnss3_CONTENTS="usr/bin/cyg*"
+libnss_devel_CATEGORY="Libs"
 libnss_devel_CONTENTS="usr/bin/${PN}-config usr/include/ usr/lib/"
 
 MOZ_SRC_DIR="mozilla/security"
@@ -22,24 +32,7 @@ src_compile() {
 
 	cd ${B}/mozilla/security
 
-	mkdir -p coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ
-	cat > coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe.manifest <<-_EOF
-	<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-	<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-	 <assemblyIdentity version="1.0.0.0"
-	  processorArchitecture="X86"
-	  name="Cygwin.nss.nsinstall"
-	  type="win32"/>
-	 <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
-	  <security>
-	   <requestedPrivileges>
-	    <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
-	   </requestedPrivileges>
-	  </security>
-	 </trustInfo>
-	</assembly>
-	_EOF
-	chmod +x coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe.manifest
+	manifestize coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe
 
 	export NSS_USE_SYSTEM_SQLITE=1
 	export PATH="${B}/mozilla/dist/CYGWIN6.1_PTH_DBG.OBJ/lib:$PATH"
