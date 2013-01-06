@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.13.6
+VERSION=3.14.1
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -9,7 +9,7 @@ applications. Applications built with NSS can support SSL v2 and v3, TLS,
 PKCS#5, PKCS#7, PKCS#11, PKCS#12, S/MIME, X.509 v3 certificates, and other
 security standards."
 HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
-SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz
+SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_WITH_CKBI_1_93_RTM/src/${P}.with.ckbi.1.93.tar.gz
 	mirror://portage/dev-libs/${PN}/files/3.12-nss-config.in
 	mirror://portage/dev-libs/${PN}/files/3.12-nss.pc.in
 "
@@ -35,7 +35,6 @@ src_compile() {
 	manifestize coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe
 
 	export NSS_USE_SYSTEM_SQLITE=1
-	export PATH="${B}/mozilla/dist/CYGWIN6.1_PTH_DBG.OBJ/lib:$PATH"
 
 	for d in coreconf dbm nss
 	do
@@ -77,11 +76,10 @@ src_install() {
 
 	dolib CYGWIN*/lib/*.dll.a CYGWIN*/lib/libcrmf.a
 
-	insinto /usr/include/${PN}
-	doins public/nss/*.h
+	includeinto nss
+	doinclude public/nss/*.h
 
-	insinto /usr/lib/pkgconfig
-	doins nss.pc
+	dopkgconfig nss.pc
 
 	dodoc ../security/nss/trademarks.txt
 }
