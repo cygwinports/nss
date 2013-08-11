@@ -1,39 +1,23 @@
---- origsrc/nss-3.12.6/mozilla/dbm/include/mcom_db.h	2009-06-04 18:18:50.000000000 -0500
-+++ src/nss-3.12.6/mozilla/dbm/include/mcom_db.h	2010-06-07 09:43:06.812919600 -0500
-@@ -59,7 +59,7 @@
- #include <sys/byteorder.h>
- #endif
+--- origsrc/nss-3.15.1/nss/cmd/shlibsign/sign.sh	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/cmd/shlibsign/sign.sh	2013-08-06 03:49:07.945232300 -0500
+@@ -11,6 +11,14 @@
+ # 5: full path to library that is to be signed
  
--#if defined(__linux) || defined(__BEOS__)
-+#if defined(__linux) || defined(__BEOS__) || defined(__CYGWIN__)
- #include <endian.h>
- #ifndef BYTE_ORDER
- #define BYTE_ORDER    __BYTE_ORDER
---- origsrc/nss-3.12.6/mozilla/security/coreconf/arch.mk	2009-06-04 21:14:49.000000000 -0500
-+++ src/nss-3.12.6/mozilla/security/coreconf/arch.mk	2010-06-07 09:43:06.825920300 -0500
-@@ -249,7 +249,7 @@ endif
- #
- ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$(OS_ARCH)))
-     OS_RELEASE := $(patsubst CYGWIN_NT-%,%,$(OS_ARCH))
--    OS_ARCH = WINNT
-+    OS_ARCH = CYGWIN
-     ifndef CPU_ARCH
-     ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
-         OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
---- origsrc/nss-3.12.6/mozilla/security/coreconf/config.mk	2009-08-25 17:35:11.000000000 -0500
-+++ src/nss-3.12.6/mozilla/security/coreconf/config.mk	2010-06-07 09:43:06.832920700 -0500
-@@ -63,7 +63,7 @@ endif
- #######################################################################
- 
- TARGET_OSES = FreeBSD BSD_OS NetBSD OpenUNIX OS2 QNX Darwin BeOS OpenBSD \
--              AIX RISCOS WINNT WIN95 Linux Android
-+              AIX RISCOS WINNT WIN95 Linux Android CYGWIN
- 
- ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
- include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
---- origsrc/nss-3.12.6/mozilla/security/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
-+++ src/nss-3.12.6/mozilla/security/coreconf/CYGWIN.mk	2010-06-07 09:43:06.821920100 -0500
-@@ -0,0 +1,134 @@
+ case "${3}" in
++CYGWIN*)
++    PATH="${1}/lib:${1}/bin:${PATH}"
++    export PATH
++    ADDON_PATH=${1}/lib:${4}:$ADDON_PATH
++    export ADDON_PATH
++    echo ${2}/shlibsign -v -i ${5}
++    ${2}/shlibsign -v -i ${5}
++    ;;
+ WIN*)
+     if echo "${PATH}" | grep -c \; >/dev/null; then
+         PATH=${1}/lib\;${1}/bin\;${4}\;${PATH}
+--- origsrc/nss-3.15.1/nss/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
++++ src/nss-3.15.1/nss/coreconf/CYGWIN.mk	2013-08-06 04:07:08.488035800 -0500
+@@ -0,0 +1,141 @@
 +#
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -132,8 +116,15 @@
 +
 +DEFAULT_COMPILER = gcc
 +
-+OS_REL_CFLAGS	= -DCYGWIN -Di386 -D_XOPEN_SOURCE
-+CPU_ARCH	= x86
++OS_REL_CFLAGS	= -DCYGWIN -D_XOPEN_SOURCE
++
++ifeq ($(OS_TEST),x86_64)
++	CPU_ARCH        = x86_64
++	USE_64		= 1
++else
++	OS_REL_CFLAGS   += -Di386
++	CPU_ARCH        = x86
++endif
 +
 +#ifdef BUILD_OPT
 +#	OPTIMIZER	= -O2
@@ -157,7 +148,7 @@
 +DSO_CFLAGS		= -DPIC -DDLL_EXPORT
 +DSO_LDOPTS		= -shared $(ARCHFLAG)
 +DSO_LDFLAGS		=
-+LDFLAGS			+= $(ARCHFLAG) -L/usr/lib/nspr
++LDFLAGS			+= $(ARCHFLAG)
 +
 +ifdef LIBRARY_NAME
 +	SHARED_LIBRARY = $(OBJDIR)/$(DLL_PREFIX)$(LIBRARY_NAME)$(LIBRARY_VERSION)$(JDK_DEBUG_SUFFIX).$(DLL_SUFFIX)
@@ -168,25 +159,40 @@
 +ifndef TARGETS
 +	TARGETS = $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM)
 +endif
---- origsrc/nss-3.12.6/mozilla/security/nss/cmd/shlibsign/sign.sh	2009-12-07 19:33:37.000000000 -0600
-+++ src/nss-3.12.6/mozilla/security/nss/cmd/shlibsign/sign.sh	2010-06-07 09:43:06.837921000 -0500
-@@ -1,5 +1,13 @@
- #!/bin/sh
- case "${3}" in
-+CYGWIN*)
-+    PATH="${1}/lib:${1}/bin:${PATH}"
-+    export PATH
-+    ADDON_PATH=${1}/lib:${4}:$ADDON_PATH
-+    export ADDON_PATH
-+    echo ${2}/shlibsign -v -i ${5}
-+    ${2}/shlibsign -v -i ${5}
-+    ;;
- WIN*)
-     if echo "${PATH}" | grep -c \; >/dev/null; then
-         PATH=${1}/lib\;${1}/bin\;${4}\;${PATH}
---- origsrc/nss-3.12.6/mozilla/security/nss/lib/ckfw/builtins/config.mk	2009-06-10 19:55:34.000000000 -0500
-+++ src/nss-3.12.6/mozilla/security/nss/lib/ckfw/builtins/config.mk	2010-06-07 09:43:06.841921200 -0500
-@@ -43,7 +43,6 @@ CONFIG_CVS_ID = "@(#) $RCSfile: config.m
+--- origsrc/nss-3.15.1/nss/coreconf/arch.mk	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/coreconf/arch.mk	2013-08-06 15:17:01.650953200 -0500
+@@ -216,7 +216,7 @@ endif
+ #
+ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$(OS_ARCH)))
+     OS_RELEASE := $(patsubst CYGWIN_NT-%,%,$(OS_ARCH))
+-    OS_ARCH = WINNT
++    OS_ARCH = CYGWIN
+     ifndef CPU_ARCH
+     ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
+         OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
+@@ -225,7 +225,7 @@ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$
+ 	#
+ 	# Cygwin's uname -m returns "i686" on a Pentium Pro machine.
+ 	#
+-	ifneq (,$(findstring 86,$(CPU_ARCH)))
++	ifneq (,$(findstring i686,$(CPU_ARCH)))
+ 	    CPU_ARCH = x386
+ 	endif
+     endif
+--- origsrc/nss-3.15.1/nss/coreconf/config.mk	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/coreconf/config.mk	2013-08-06 03:49:07.897229500 -0500
+@@ -31,7 +31,7 @@ endif
+ #######################################################################
+ 
+ TARGET_OSES = FreeBSD BSD_OS NetBSD OpenUNIX OS2 QNX Darwin BeOS OpenBSD \
+-              AIX RISCOS WINNT WIN95 Linux Android
++              AIX RISCOS WINNT WIN95 Linux Android CYGWIN
+ 
+ ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
+ include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
+--- origsrc/nss-3.15.1/nss/lib/ckfw/builtins/config.mk	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/lib/ckfw/builtins/config.mk	2013-08-06 03:49:07.974233900 -0500
+@@ -10,7 +10,6 @@
  
  TARGETS        = $(SHARED_LIBRARY)
  LIBRARY        =
@@ -194,9 +200,9 @@
  PROGRAM        =
  
  ifeq (,$(filter-out WIN%,$(OS_TARGET)))
---- origsrc/nss-3.12.6/mozilla/security/nss/lib/freebl/config.mk	2009-04-11 16:18:42.000000000 -0500
-+++ src/nss-3.12.6/mozilla/security/nss/lib/freebl/config.mk	2010-06-07 09:43:06.846921500 -0500
-@@ -69,7 +69,6 @@ else
+--- origsrc/nss-3.15.1/nss/lib/freebl/config.mk	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/lib/freebl/config.mk	2013-08-06 03:49:08.003235600 -0500
+@@ -38,7 +38,6 @@ else
  
  TARGETS      = $(SHARED_LIBRARY)
  LIBRARY      =
@@ -204,9 +210,9 @@
  PROGRAM      =
  
  ifeq ($(OS_TARGET), SunOS)
---- origsrc/nss-3.12.6/mozilla/security/nss/lib/freebl/unix_rand.c	2009-06-09 19:42:17.000000000 -0500
-+++ src/nss-3.12.6/mozilla/security/nss/lib/freebl/unix_rand.c	2010-06-07 09:43:06.854922000 -0500
-@@ -188,7 +188,7 @@ static SECStatus RNG_kstat(PRUint32* fed
+--- origsrc/nss-3.15.1/nss/lib/freebl/unix_rand.c	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/lib/freebl/unix_rand.c	2013-08-06 03:49:08.022236700 -0500
+@@ -156,7 +156,7 @@ static SECStatus RNG_kstat(PRUint32* fed
  
  #if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) \
      || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) \
@@ -215,9 +221,9 @@
  #include <sys/times.h>
  
  #define getdtablesize() sysconf(_SC_OPEN_MAX)
---- origsrc/nss-3.12.6/mozilla/security/nss/lib/nss/nssinit.c	2010-01-21 20:10:54.000000000 -0600
-+++ src/nss-3.12.6/mozilla/security/nss/lib/nss/nssinit.c	2010-06-07 22:57:44.189909500 -0500
-@@ -276,6 +276,8 @@ static const char *dllname =
+--- origsrc/nss-3.15.1/nss/lib/nss/nssinit.c	2013-06-27 12:58:08.000000000 -0500
++++ src/nss-3.15.1/nss/lib/nss/nssinit.c	2013-08-06 03:49:08.029237100 -0500
+@@ -245,6 +245,8 @@ static const char *dllname =
  	"libnssckbi.sl";
  #elif defined(DARWIN)
  	"libnssckbi.dylib";

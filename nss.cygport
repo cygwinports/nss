@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.14.3
+VERSION=3.15.1
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -9,39 +9,33 @@ applications. Applications built with NSS can support SSL v2 and v3, TLS,
 PKCS#5, PKCS#7, PKCS#11, PKCS#12, S/MIME, X.509 v3 certificates, and other
 security standards."
 HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
-SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${PV//./_}_RTM/src/${P}.tar.gz
-	mirror://portage/dev-libs/${PN}/files/3.12-nss-config.in
-	mirror://portage/dev-libs/${PN}/files/3.12-nss.pc.in
+SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${VERSION//./_}_RTM/src/nss-${VERSION}.tar.gz
+	mirror://portage/dev-libs/nss/files/3.12-nss-config.in
+	mirror://portage/dev-libs/nss/files/3.12-nss.pc.in
 "
 PATCH_URI="
-	3.12.6-cygwin.patch
+	3.15.1-cygwin.patch
 "
 
-PKG_NAMES="${PN} lib${PN}3 lib${PN}-devel"
+PKG_NAMES="nss libnss3 libnss-devel"
 nss_CONTENTS='--exclude=*.a usr/bin/*.exe usr/share/doc/'
 libnss3_CATEGORY="Libs"
 libnss3_CONTENTS="usr/bin/cyg*"
 libnss_devel_CATEGORY="Libs"
-libnss_devel_CONTENTS="usr/bin/${PN}-config usr/include/ usr/lib/"
+libnss_devel_CONTENTS="usr/bin/nss-config usr/include/ usr/lib/"
 
-MOZ_SRC_DIR="mozilla/security"
 MAKEOPTS+=' -j1' # BUILD_OPT=1'
 
 src_compile() {
 	lndirs
 
-	cd ${B}/mozilla/security
+	cd ${B}/nss
 
 	manifestize coreconf/nsinstall/CYGWIN6.1_PTH_DBG.OBJ/nsinstall.exe
 
 	export NSS_USE_SYSTEM_SQLITE=1
 
-	for d in coreconf dbm nss
-	do
-		pushd ${d}
-		cygmake CC="${CC}"
-		popd
-	done
+	cygmake CC="${CC}"
 
 	sed -e "s,@prefix@,/usr,g" \
 		-e "s,@exec_prefix@,/usr,g" \
@@ -51,7 +45,7 @@ src_compile() {
 		-e "s,@MOD_MAJOR_VERSION@,${PV[1]},g" \
 		-e "s,@MOD_MINOR_VERSION@,${PV[2]},g" \
 		-e "s,@MOD_PATCH_VERSION@,${PV[3]},g" \
-		${S}/3.12-nss-config.in > ${B}/mozilla/dist/nss-config
+		${S}/3.12-nss-config.in > ${B}/dist/nss-config
 
 	sed -e "s,@prefix@,/usr,g" \
 		-e "s,@exec_prefix@,/usr,g" \
@@ -59,20 +53,20 @@ src_compile() {
 		-e "s,@libdir@,/usr/lib,g" \
 		-e 's|-Wl,-R${libdir}||g' \
 		-e "s,@NSPR_VERSION@,`nspr-config --version`,g" \
-		-e "s,@NSS_VERSION@,${PV},g" \
-		${S}/3.12-nss.pc.in > ${B}/mozilla/dist/nss.pc
+		-e "s,@NSS_VERSION@,${VERSION},g" \
+		${S}/3.12-nss.pc.in > ${B}/dist/nss.pc
 }
 
 src_install() {
-	cd ${B}/mozilla/dist
+	cd ${B}/dist
 
 	dobin CYGWIN*/bin/{cert,cms,crl,mod,pk12}util.exe
 	dobin CYGWIN*/bin/{shlibsign,signtool,signver,ssltap}.exe
 	dobin CYGWIN*/lib/*.dll
 	dobin nss-config
 
-	insinto /usr/bin
-	doins CYGWIN*/lib/*.chk
+#	insinto /usr/bin
+#	doins CYGWIN*/lib/*.chk
 
 	dolib CYGWIN*/lib/*.dll.a CYGWIN*/lib/libcrmf.a
 
@@ -81,5 +75,5 @@ src_install() {
 
 	dopkgconfig nss.pc
 
-	dodoc ../security/nss/trademarks.txt
+	dodoc ${S}/nss/trademarks.txt
 }
