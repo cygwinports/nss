@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.15.1
+VERSION=3.15.3.1
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -20,9 +20,10 @@ PATCH_URI="
 PKG_NAMES="nss libnss3 libnss-devel"
 nss_CONTENTS='--exclude=*.a usr/bin/*.exe usr/share/doc/'
 libnss3_CATEGORY="Libs"
-libnss3_CONTENTS="usr/bin/cyg*"
+libnss3_REQUIRES="ca-certificates p11-kit-trust"
+libnss3_CONTENTS="usr/bin/cyg*3.chk usr/bin/cyg*3.dll usr/lib/cygnssckbi.dll"
 libnss_devel_CATEGORY="Libs"
-libnss_devel_CONTENTS="usr/bin/nss-config usr/include/ usr/lib/"
+libnss_devel_CONTENTS="usr/bin/nss-config usr/include/ usr/lib/lib* usr/lib/pkgconfig/"
 
 MAKEOPTS+=' -j1' # BUILD_OPT=1'
 
@@ -35,7 +36,7 @@ src_compile() {
 
 	export NSS_USE_SYSTEM_SQLITE=1
 
-	cygmake CC="${CC}"
+	cygmake CC="${CC}" OPTIMIZER="${CFLAGS}"
 
 	sed -e "s,@prefix@,/usr,g" \
 		-e "s,@exec_prefix@,/usr,g" \
@@ -62,18 +63,21 @@ src_install() {
 
 	dobin CYGWIN*/bin/{cert,cms,crl,mod,pk12}util.exe
 	dobin CYGWIN*/bin/{shlibsign,signtool,signver,ssltap}.exe
-	dobin CYGWIN*/lib/*.dll
+	dobin CYGWIN*/lib/*3.dll
 	dobin nss-config
 
-#	insinto /usr/bin
-#	doins CYGWIN*/lib/*.chk
+	insinto /usr/bin
+	doins CYGWIN*/lib/*.chk
 
-	dolib CYGWIN*/lib/*.dll.a CYGWIN*/lib/libcrmf.a
+	dolib CYGWIN*/lib/*3.dll.a CYGWIN*/lib/libcrmf.a
 
 	includeinto nss
 	doinclude public/nss/*.h
 
 	dopkgconfig nss.pc
 
-	dodoc ${S}/nss/trademarks.txt
+	# https://fedoraproject.org/wiki/Features/SharedSystemCertificates
+	dosym pkcs11/p11-kit-trust.so /usr/lib/cygnssckbi.dll
+
+	dodoc ${S}/nss/COPYING ${S}/nss/trademarks.txt
 }

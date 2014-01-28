@@ -138,7 +138,7 @@
 +OS_PTHREAD = -lpthread 
 +endif
 +
-+OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) $(ARCHFLAG) -ansi -Wall -pipe -D_BSD_SOURCE -DHAVE_STRERROR -I/usr/include/nspr
++OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) $(ARCHFLAG) -Wall -pipe -D_BSD_SOURCE -DHAVE_STRERROR -I/usr/include/nspr
 +OS_LIBS			= $(OS_PTHREAD)
 +
 +MKSHLIB		= $(CC) -shared -Wl,--enable-auto-image-base $(_GEN_IMPORT_LIB) $(LDFLAGS)
