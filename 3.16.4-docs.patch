@@ -1,0 +1,40 @@
+--- origsrc/nss-3.16.4/nss/doc/Makefile	2014-08-05 12:24:47.000000000 -0500
++++ src/nss-3.16.4/nss/doc/Makefile	2014-08-18 18:30:23.580169700 -0500
+@@ -7,7 +7,7 @@
+ # derdump, pp, vfychain, vfyserv
+ #
+ 
+-.SUFFIXES: .html .txt .1 .xml
++.SUFFIXES: .html .txt .1 .5 .xml
+ 
+ COMPILE.1 = xmlto -o nroff man
+ COMPILE.html = xmlto -o html html
+@@ -58,11 +58,15 @@ tarball:
+ 
+ nroff/%.1 : %.xml
+ 	$(COMPILE.1) $<
++
++nroff/%.5 : %.xml
++	$(COMPILE.1) $<
+ 	
+ MANPAGES = \
+ nroff/certutil.1 nroff/cmsutil.1 nroff/crlutil.1 nroff/pk12util.1 \
+-nroff/modutil.1 nroff/ssltap.1 nroff/derdump.1 nroff/signtool.1 nroff/signver.1 \
+-nroff/pp.1 nroff/vfychain.1 nroff/vfyserv.1
++nroff/modutil.1 nroff/ssltap.1 nroff/signtool.1 nroff/signver.1 \
++nroff/nss-config.1 nroff/setup-nsssysinit.1 nroff/cert8.db.5 nroff/cert9.db.5 \
++nroff/key3.db.5 nroff/key4.db.5 nroff/pkcs11.txt.5 nroff/secmod.db.5
+ 
+ all-man: prepare $(MANPAGES)
+ 
+@@ -76,7 +80,8 @@ html/%.html : %.xml
+ 
+ HTMLPAGES = \
+ html/certutil.html html/cmsutil.html html/crlutil.html html/pk12util.html html/modutil.html \
+-html/ssltap.html html/derdump.html html/signtool.html html/signver.html html/pp.html \
+-html/vfychain.html html/vfyserv.html
++html/ssltap.html html/signtool.html html/signver.html html/nss-config.html \
++html/setup-nsssysinit.html html/cert8.db.html html/cert9.db.html \
++html/key3.db.html html/key4.db.html html/pkcs11.txt.html html/secmod.db.html
+ 
+ all-html: prepare $(HTMLPAGES)

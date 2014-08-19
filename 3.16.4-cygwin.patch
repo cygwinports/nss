@@ -1,5 +1,5 @@
---- origsrc/nss-3.15.1/nss/cmd/shlibsign/sign.sh	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/cmd/shlibsign/sign.sh	2013-08-06 03:49:07.945232300 -0500
+--- origsrc/nss-3.16.4/nss/cmd/shlibsign/sign.sh	2014-08-18 16:19:03.585537400 -0500
++++ src/nss-3.16.4/nss/cmd/shlibsign/sign.sh	2014-08-18 15:21:58.000000000 -0500
 @@ -11,6 +11,14 @@
  # 5: full path to library that is to be signed
  
@@ -15,9 +15,9 @@
  WIN*)
      if echo "${PATH}" | grep -c \; >/dev/null; then
          PATH=${1}/lib\;${1}/bin\;${4}\;${PATH}
---- origsrc/nss-3.15.1/nss/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
-+++ src/nss-3.15.1/nss/coreconf/CYGWIN.mk	2013-08-06 04:07:08.488035800 -0500
-@@ -0,0 +1,141 @@
+--- origsrc/nss-3.16.4/nss/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
++++ src/nss-3.16.4/nss/coreconf/CYGWIN.mk	2014-08-18 16:18:49.876796600 -0500
+@@ -0,0 +1,145 @@
 +#
 +# ***** BEGIN LICENSE BLOCK *****
 +# Version: MPL 1.1/GPL 2.0/LGPL 2.1
@@ -159,9 +159,13 @@
 +ifndef TARGETS
 +	TARGETS = $(LIBRARY) $(SHARED_LIBRARY) $(IMPORT_LIBRARY) $(PROGRAM)
 +endif
---- origsrc/nss-3.15.1/nss/coreconf/arch.mk	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/coreconf/arch.mk	2013-08-06 15:17:01.650953200 -0500
-@@ -216,7 +216,7 @@ endif
++
++USE_SYSTEM_ZLIB = 1
++ZLIB_LIBS       = -lz
++
+--- origsrc/nss-3.16.4/nss/coreconf/arch.mk	2014-08-18 16:19:03.594038500 -0500
++++ src/nss-3.16.4/nss/coreconf/arch.mk	2014-08-18 15:21:58.000000000 -0500
+@@ -190,7 +190,7 @@ endif
  #
  ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$(OS_ARCH)))
      OS_RELEASE := $(patsubst CYGWIN_NT-%,%,$(OS_ARCH))
@@ -170,7 +174,7 @@
      ifndef CPU_ARCH
      ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
          OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
-@@ -225,7 +225,7 @@ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$
+@@ -199,7 +199,7 @@ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$
  	#
  	# Cygwin's uname -m returns "i686" on a Pentium Pro machine.
  	#
@@ -179,8 +183,8 @@
  	    CPU_ARCH = x386
  	endif
      endif
---- origsrc/nss-3.15.1/nss/coreconf/config.mk	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/coreconf/config.mk	2013-08-06 03:49:07.897229500 -0500
+--- origsrc/nss-3.16.4/nss/coreconf/config.mk	2014-08-18 16:19:03.600539300 -0500
++++ src/nss-3.16.4/nss/coreconf/config.mk	2014-08-18 15:21:58.000000000 -0500
 @@ -31,7 +31,7 @@ endif
  #######################################################################
  
@@ -190,8 +194,21 @@
  
  ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
  include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
---- origsrc/nss-3.15.1/nss/lib/ckfw/builtins/config.mk	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/lib/ckfw/builtins/config.mk	2013-08-06 03:49:07.974233900 -0500
+--- origsrc/nss-3.16.4/nss/lib/Makefile	2014-08-05 12:24:47.000000000 -0500
++++ src/nss-3.16.4/nss/lib/Makefile	2014-08-18 16:11:48.398275700 -0500
+@@ -37,10 +37,8 @@ endif
+ endif
+ 
+ ifndef MOZILLA_CLIENT
+-ifeq ($(OS_ARCH),Linux)
+ SYSINIT_SRCDIR = sysinit  # Add the sysinit directory to DIRS.
+ endif
+-endif
+ 
+ ifndef NSS_DISABLE_DBM
+ DBM_SRCDIR = dbm  # Add the dbm directory to DIRS.
+--- origsrc/nss-3.16.4/nss/lib/ckfw/builtins/config.mk	2014-08-18 16:19:03.605039900 -0500
++++ src/nss-3.16.4/nss/lib/ckfw/builtins/config.mk	2014-08-18 15:21:58.000000000 -0500
 @@ -10,7 +10,6 @@
  
  TARGETS        = $(SHARED_LIBRARY)
@@ -200,8 +217,8 @@
  PROGRAM        =
  
  ifeq (,$(filter-out WIN%,$(OS_TARGET)))
---- origsrc/nss-3.15.1/nss/lib/freebl/config.mk	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/lib/freebl/config.mk	2013-08-06 03:49:08.003235600 -0500
+--- origsrc/nss-3.16.4/nss/lib/freebl/config.mk	2014-08-18 16:19:03.609540500 -0500
++++ src/nss-3.16.4/nss/lib/freebl/config.mk	2014-08-18 15:21:58.000000000 -0500
 @@ -38,7 +38,6 @@ else
  
  TARGETS      = $(SHARED_LIBRARY)
@@ -210,8 +227,8 @@
  PROGRAM      =
  
  ifeq ($(OS_TARGET), SunOS)
---- origsrc/nss-3.15.1/nss/lib/freebl/unix_rand.c	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/lib/freebl/unix_rand.c	2013-08-06 03:49:08.022236700 -0500
+--- origsrc/nss-3.16.4/nss/lib/freebl/unix_rand.c	2014-08-18 16:19:03.614541100 -0500
++++ src/nss-3.16.4/nss/lib/freebl/unix_rand.c	2014-08-18 15:21:58.000000000 -0500
 @@ -156,7 +156,7 @@ static SECStatus RNG_kstat(PRUint32* fed
  
  #if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) \
@@ -221,14 +238,3 @@
  #include <sys/times.h>
  
  #define getdtablesize() sysconf(_SC_OPEN_MAX)
---- origsrc/nss-3.15.1/nss/lib/nss/nssinit.c	2013-06-27 12:58:08.000000000 -0500
-+++ src/nss-3.15.1/nss/lib/nss/nssinit.c	2013-08-06 03:49:08.029237100 -0500
-@@ -245,6 +245,8 @@ static const char *dllname =
- 	"libnssckbi.sl";
- #elif defined(DARWIN)
- 	"libnssckbi.dylib";
-+#elif defined(CYGWIN)
-+	"cygnssckbi.dll";
- #elif defined(XP_UNIX) || defined(XP_BEOS)
- 	"libnssckbi.so";
- #else
