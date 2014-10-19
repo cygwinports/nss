@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.16.4
+VERSION=3.16.6
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
