@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.19.1
+VERSION=3.20
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -9,7 +9,7 @@ applications. Applications built with NSS can support SSL v2 and v3, TLS,
 PKCS#5, PKCS#7, PKCS#11, PKCS#12, S/MIME, X.509 v3 certificates, and other
 security standards."
 HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
-SRC_URI="ftp://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${VERSION//./_}_RTM/src/nss-${VERSION}.tar.gz
+SRC_URI="https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${VERSION//./_}_RTM/src/nss-${VERSION}.tar.gz
 	https://pkgs.fedoraproject.org/cgit/nss.git/plain/nss-config.in
 	https://pkgs.fedoraproject.org/cgit/nss.git/plain/nss.pc.in
 	https://pkgs.fedoraproject.org/cgit/nss-softokn.git/plain/nss-softokn.pc.in
