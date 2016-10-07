@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.20.1
+VERSION=3.27.1
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -29,8 +29,6 @@ SRC_URI="https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${VER
 	https://pkgs.fedoraproject.org/cgit/nss.git/plain/pkcs11.txt.xml
 	https://pkgs.fedoraproject.org/cgit/nss.git/plain/secmod.db.xml
 	https://pkgs.fedoraproject.org/cgit/nss.git/plain/setup-nsssysinit.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/disableSSL2libssl.patch
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/disableSSL2tests.patch
 "
 PATCH_URI="
 	3.16.4-cygwin.patch
@@ -51,10 +49,6 @@ CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {
 	mv *.xml nss/doc/
 	rm -fr nss/doc/{html,nroff}/
-	pushd nss
-	cygpatch ../disableSSL2libssl.patch
-	cygpatch ../disableSSL2tests.patch
-	popd
 }
 
 src_compile() {

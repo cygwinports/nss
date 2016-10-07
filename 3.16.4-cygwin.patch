@@ -138,7 +138,7 @@
 +OS_PTHREAD = -lpthread 
 +endif
 +
-+OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) $(ARCHFLAG) -Wall -pipe -D_BSD_SOURCE -DHAVE_STRERROR -I/usr/include/nspr
++OS_CFLAGS		= $(DSO_CFLAGS) $(OS_REL_CFLAGS) $(ARCHFLAG) -Wall -pipe -DHAVE_STRERROR -I/usr/include/nspr
 +OS_LIBS			= $(OS_PTHREAD)
 +
 +MKSHLIB		= $(CC) -shared -Wl,--enable-auto-image-base $(_GEN_IMPORT_LIB) $(LDFLAGS)
@@ -194,6 +194,24 @@
  
  ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
  include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
+--- origsrc/nss-3.27.1/nss/external_tests/common/gtest.mk	2016-10-03 09:55:58.000000000 -0500
++++ src/nss-3.27.1/nss/external_tests/common/gtest.mk	2016-10-07 13:03:56.714941400 -0500
+@@ -7,7 +7,7 @@
+ include $(CORE_DEPTH)/cmd/platlibs.mk
+ 
+ MKPROG = $(CCC)
+-MKSHLIB	= $(CCC) $(DSO_LDOPTS) $(DARWIN_SDK_SHLIBFLAGS)
++MKSHLIB	= $(CCC) $(DSO_LDOPTS) $(DARWIN_SDK_SHLIBFLAGS) $(_GEN_IMPORT_LIB)
+ 
+ # gtests pick up errors with signed/unsigned comparisons on some platforms
+ # even though we disabled -Wsign-compare.
+@@ -32,5 +32,5 @@ ifeq (WINNT,$(OS_ARCH))
+     # Needed because we include files from a subdirectory
+     MAKE_OBJDIR = $(INSTALL) -D $(dir $@)
+ else
+-    CXXFLAGS += -std=c++0x
++    CXXFLAGS += -std=c++0x -D_POSIX_C_SOURCE=200809L
+ endif
 --- origsrc/nss-3.16.4/nss/lib/Makefile	2014-08-05 12:24:47.000000000 -0500
 +++ src/nss-3.16.4/nss/lib/Makefile	2014-08-18 16:11:48.398275700 -0500
 @@ -37,10 +37,8 @@ endif
@@ -227,14 +245,14 @@
  PROGRAM      =
  
  ifeq ($(OS_TARGET), SunOS)
---- origsrc/nss-3.16.4/nss/lib/freebl/unix_rand.c	2014-08-18 16:19:03.614541100 -0500
-+++ src/nss-3.16.4/nss/lib/freebl/unix_rand.c	2014-08-18 15:21:58.000000000 -0500
-@@ -156,7 +156,7 @@ static SECStatus RNG_kstat(PRUint32* fed
+--- origsrc/nss-3.27.1/nss/lib/freebl/unix_rand.c
++++ src/nss-3.27.1/nss/lib/freebl/unix_rand.c
+@@ -160,7 +160,7 @@ static SECStatus RNG_kstat(PRUint32* fed
  
- #if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) \
-     || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) \
--    || defined(NTO) || defined(__riscos__)
-+    || defined(NTO) || defined(__riscos__) || defined(CYGWIN)
+ #endif
+ 
+-#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__)
++#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__) || defined(__CYGWIN__)
  #include <sys/times.h>
  
  #define getdtablesize() sysconf(_SC_OPEN_MAX)
