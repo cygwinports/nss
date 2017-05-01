@@ -1,5 +1,5 @@
---- origsrc/nss-3.16.4/nss/cmd/shlibsign/sign.sh	2014-08-18 16:19:03.585537400 -0500
-+++ src/nss-3.16.4/nss/cmd/shlibsign/sign.sh	2014-08-18 15:21:58.000000000 -0500
+--- origsrc/nss-3.30.2/nss/cmd/shlibsign/sign.sh	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/cmd/shlibsign/sign.sh	2017-04-30 11:27:45.446256800 -0500
 @@ -11,6 +11,14 @@
  # 5: full path to library that is to be signed
  
@@ -15,8 +15,8 @@
  WIN*)
      if echo "${PATH}" | grep -c \; >/dev/null; then
          PATH=${1}/lib\;${1}/bin\;${4}\;${PATH}
---- origsrc/nss-3.16.4/nss/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
-+++ src/nss-3.16.4/nss/coreconf/CYGWIN.mk	2014-08-18 16:18:49.876796600 -0500
+--- origsrc/nss-3.30.2/nss/coreconf/CYGWIN.mk	1969-12-31 18:00:00.000000000 -0600
++++ src/nss-3.30.2/nss/coreconf/CYGWIN.mk	2017-04-30 11:18:08.492186300 -0500
 @@ -0,0 +1,145 @@
 +#
 +# ***** BEGIN LICENSE BLOCK *****
@@ -163,9 +163,9 @@
 +USE_SYSTEM_ZLIB = 1
 +ZLIB_LIBS       = -lz
 +
---- origsrc/nss-3.16.4/nss/coreconf/arch.mk	2014-08-18 16:19:03.594038500 -0500
-+++ src/nss-3.16.4/nss/coreconf/arch.mk	2014-08-18 15:21:58.000000000 -0500
-@@ -190,7 +190,7 @@ endif
+--- origsrc/nss-3.30.2/nss/coreconf/arch.mk	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/coreconf/arch.mk	2017-04-30 11:27:55.045876200 -0500
+@@ -197,7 +197,7 @@ endif
  #
  ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$(OS_ARCH)))
      OS_RELEASE := $(patsubst CYGWIN_NT-%,%,$(OS_ARCH))
@@ -174,7 +174,7 @@
      ifndef CPU_ARCH
      ifeq (WOW64,$(findstring WOW64,$(OS_RELEASE)))
          OS_RELEASE := $(patsubst %-WOW64,%,$(OS_RELEASE))
-@@ -199,7 +199,7 @@ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$
+@@ -206,7 +206,7 @@ ifeq (CYGWIN_NT,$(findstring CYGWIN_NT,$
  	#
  	# Cygwin's uname -m returns "i686" on a Pentium Pro machine.
  	#
@@ -183,8 +183,8 @@
  	    CPU_ARCH = x386
  	endif
      endif
---- origsrc/nss-3.16.4/nss/coreconf/config.mk	2014-08-18 16:19:03.600539300 -0500
-+++ src/nss-3.16.4/nss/coreconf/config.mk	2014-08-18 15:21:58.000000000 -0500
+--- origsrc/nss-3.30.2/nss/coreconf/config.mk	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/coreconf/config.mk	2017-04-30 11:27:55.051878300 -0500
 @@ -31,7 +31,7 @@ endif
  #######################################################################
  
@@ -194,8 +194,8 @@
  
  ifeq (,$(filter-out $(TARGET_OSES),$(OS_TARGET)))
  include $(CORE_DEPTH)/coreconf/$(OS_TARGET).mk
---- origsrc/nss-3.27.1/nss/external_tests/common/gtest.mk	2016-10-03 09:55:58.000000000 -0500
-+++ src/nss-3.27.1/nss/external_tests/common/gtest.mk	2016-10-07 13:03:56.714941400 -0500
+--- origsrc/nss-3.30.2/nss/gtests/common/gtest.mk	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/gtests/common/gtest.mk	2017-04-30 11:27:32.436806000 -0500
 @@ -7,7 +7,7 @@
  include $(CORE_DEPTH)/cmd/platlibs.mk
  
@@ -212,8 +212,8 @@
 -    CXXFLAGS += -std=c++0x
 +    CXXFLAGS += -std=c++0x -D_POSIX_C_SOURCE=200809L
  endif
---- origsrc/nss-3.16.4/nss/lib/Makefile	2014-08-05 12:24:47.000000000 -0500
-+++ src/nss-3.16.4/nss/lib/Makefile	2014-08-18 16:11:48.398275700 -0500
+--- origsrc/nss-3.30.2/nss/lib/Makefile	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/lib/Makefile	2017-04-30 11:27:55.055878400 -0500
 @@ -37,10 +37,8 @@ endif
  endif
  
@@ -225,8 +225,8 @@
  
  ifndef NSS_DISABLE_DBM
  DBM_SRCDIR = dbm  # Add the dbm directory to DIRS.
---- origsrc/nss-3.16.4/nss/lib/ckfw/builtins/config.mk	2014-08-18 16:19:03.605039900 -0500
-+++ src/nss-3.16.4/nss/lib/ckfw/builtins/config.mk	2014-08-18 15:21:58.000000000 -0500
+--- origsrc/nss-3.30.2/nss/lib/ckfw/builtins/config.mk	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/lib/ckfw/builtins/config.mk	2017-04-30 11:27:55.060877600 -0500
 @@ -10,7 +10,6 @@
  
  TARGETS        = $(SHARED_LIBRARY)
@@ -235,8 +235,8 @@
  PROGRAM        =
  
  ifeq (,$(filter-out WIN%,$(OS_TARGET)))
---- origsrc/nss-3.16.4/nss/lib/freebl/config.mk	2014-08-18 16:19:03.609540500 -0500
-+++ src/nss-3.16.4/nss/lib/freebl/config.mk	2014-08-18 15:21:58.000000000 -0500
+--- origsrc/nss-3.30.2/nss/lib/freebl/config.mk	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/lib/freebl/config.mk	2017-04-30 11:27:55.064877900 -0500
 @@ -38,7 +38,6 @@ else
  
  TARGETS      = $(SHARED_LIBRARY)
@@ -245,14 +245,14 @@
  PROGRAM      =
  
  ifeq ($(OS_TARGET), SunOS)
---- origsrc/nss-3.27.1/nss/lib/freebl/unix_rand.c
-+++ src/nss-3.27.1/nss/lib/freebl/unix_rand.c
-@@ -160,7 +160,7 @@ static SECStatus RNG_kstat(PRUint32* fed
+--- origsrc/nss-3.30.2/nss/lib/freebl/unix_rand.c	2017-04-20 09:25:50.000000000 -0500
++++ src/nss-3.30.2/nss/lib/freebl/unix_rand.c	2017-04-30 11:27:55.069879000 -0500
+@@ -160,7 +160,7 @@ RNG_kstat(PRUint32 *fed)
  
  #endif
  
--#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__)
-+#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__) || defined(__CYGWIN__)
+-#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__NetBSD_kernel__)
++#if defined(SCO) || defined(UNIXWARE) || defined(BSDI) || defined(FREEBSD) || defined(NETBSD) || defined(DARWIN) || defined(OPENBSD) || defined(NTO) || defined(__riscos__) || defined(__GNU__) || defined(__FreeBSD_kernel__) || defined(__NetBSD_kernel__) || defined(__CYGWIN__)
  #include <sys/times.h>
  
  #define getdtablesize() sysconf(_SC_OPEN_MAX)
