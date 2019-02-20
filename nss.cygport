@@ -1,5 +1,5 @@
 NAME="nss"
-VERSION=3.30.2
+VERSION=3.42.1
 RELEASE=1
 CATEGORY="Utils"
 SUMMARY="Netscape Network Security Services"
@@ -10,40 +10,61 @@ PKCS#5, PKCS#7, PKCS#11, PKCS#12, S/MIME, X.509 v3 certificates, and other
 security standards."
 HOMEPAGE="http://www.mozilla.org/projects/security/pki/nss/"
 SRC_URI="https://ftp.mozilla.org/pub/mozilla.org/security/nss/releases/NSS_${VERSION//./_}_RTM/src/nss-${VERSION}.tar.gz
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/nss-config.in
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/nss.pc.in
-	https://pkgs.fedoraproject.org/cgit/nss-softokn.git/plain/nss-softokn.pc.in
-	https://pkgs.fedoraproject.org/cgit/nss-util.git/plain/nss-util.pc.in
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/setup-nsssysinit.sh
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/system-pkcs11.txt
+	fedora/nss-util.pc.in
+	fedora/nss-util-config.in
+	fedora/nss-softokn.pc.in
+	fedora/nss-softokn-config.in
+	fedora/nss.pc.in
+	fedora/nss-config.in
 	https://pkgs.fedoraproject.org/repo/pkgs/nss/blank-cert8.db/a5ae49867124ac75f029a9a33af31bad/blank-cert8.db
 	https://pkgs.fedoraproject.org/repo/pkgs/nss/blank-cert9.db/691e663ccc07b7a1eaa6f088e03bf8e2/blank-cert9.db
 	https://pkgs.fedoraproject.org/repo/pkgs/nss/blank-key3.db/9315689bbd9f28ceebd47894f99fccbd/blank-key3.db
 	https://pkgs.fedoraproject.org/repo/pkgs/nss/blank-key4.db/2ec9e0606ba40fe65196545564b7cc2a/blank-key4.db
 	https://pkgs.fedoraproject.org/repo/pkgs/nss/blank-secmod.db/73bc040a0542bba387e6dd7fb9fd7d23/blank-secmod.db
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/cert8.db.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/cert9.db.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/key3.db.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/key4.db.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/nss-config.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/pkcs11.txt.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/secmod.db.xml
-	https://pkgs.fedoraproject.org/cgit/nss.git/plain/setup-nsssysinit.xml
+	fedora/system-pkcs11.txt
+	fedora/setup-nsssysinit.sh
+	fedora/nss-config.xml
+	fedora/setup-nsssysinit.xml
+	fedora/pkcs11.txt.xml
+	fedora/cert8.db.xml
+	fedora/cert9.db.xml
+	fedora/key3.db.xml
+	fedora/key4.db.xml
+	fedora/secmod.db.xml
+	fedora/nss-p11-kit.config
 "
 PATCH_URI="
+	fedora/nss-539183.patch
+	fedora/iquote.patch
 	3.30.2-cygwin.patch
 	3.16.4-docs.patch
 "
 
 PKG_NAMES="nss libnss3 libnss-devel"
-nss_CONTENTS="--exclude=nss-config* --exclude=*.dll --exclude=*.chk
-	usr/bin/ usr/share/doc/ usr/share/man/man1/"
+nss_CONTENTS="
+	--exclude=*-config*
+	usr/bin/*.exe
+	usr/bin/setup-nsssysinit
+	usr/share/doc/
+	usr/share/man/man1/
+"
 libnss3_CATEGORY="Libs"
-libnss3_REQUIRES="ca-certificates p11-kit-trust"
-libnss3_CONTENTS="etc/ usr/bin/cyg*3.chk usr/bin/cyg*3.dll usr/lib/libnss*.so usr/share/man/man5/"
+libnss3_REQUIRES="ca-certificates crypto-policies p11-kit-trust"
+libnss3_CONTENTS="
+	etc/
+	usr/bin/cyg*3.chk
+	usr/bin/cyg*3.dll
+	usr/lib/libnss*.so
+	usr/share/man/man5/
+"
 libnss_devel_CATEGORY="Libs"
-libnss_devel_CONTENTS="usr/bin/nss-config usr/include/ usr/lib/lib*.a
-	usr/lib/pkgconfig/ usr/share/man/man1/nss-config.1*"
+libnss_devel_CONTENTS="
+	usr/bin/*-config
+	usr/include/nss/
+	usr/lib/lib*.a
+	usr/lib/pkgconfig/nss*.pc
+	usr/share/man/man1/*-config.1*
+"
 
 CYGPORT_USE_UNSTABLE_API=1
 src_unpack_hook() {
@@ -56,18 +77,24 @@ src_compile() {
 
 	cd ${B}/nss
 
+	export FREEBL_NO_DEPEND=1
+	export FREEBL_LOWHASH=1
+	export IN_TREE_FREEBL_HEADERS_FIRST=1
 	export NSS_USE_SYSTEM_SQLITE=1
-	export NSS_NO_SSL2_NO_EXPORT=1
-	export NSS_DISABLE_TLS_1_3=1
+	export NSS_ALLOW_SSLKEYLOGFILE=1
+	export POLICY_FILE="nss.config"
+	export POLICY_PATH="/etc/crypto-policies/back-ends"
 
 	cygmake -j1 CC="${CC}" OPTIMIZER="${CFLAGS}"
 	cygmake -j1 build_docs
 
+	for l in nss nss-softokn nss-util
+	do
 	sed -e "s,@prefix@,/usr,g" \
 		-e "s,@MOD_MAJOR_VERSION@,${PV[1]},g" \
 		-e "s,@MOD_MINOR_VERSION@,${PV[2]},g" \
 		-e "s,@MOD_PATCH_VERSION@,${PV[3]},g" \
-		${S}/nss-config.in > ${B}/dist/nss-config
+		${S}/$l-config.in > ${B}/dist/$l-config
 
 	sed -e "s,%prefix%,/usr,g" \
 		-e "s,%exec_prefix%,/usr,g" \
@@ -76,24 +103,9 @@ src_compile() {
 		-e "s,%NSPR_VERSION%,`nspr-config --version`,g" \
 		-e "s,%NSS_VERSION%,${VERSION},g" \
 		-e "s,%NSSUTIL_VERSION%,${VERSION},g" \
-		${S}/nss.pc.in > ${B}/dist/nss.pc
-
-	sed -e "s,%prefix%,/usr,g" \
-		-e "s,%exec_prefix%,/usr,g" \
-		-e "s,%includedir%,/usr/include/nss," \
-		-e "s,%libdir%,/usr/lib,g" \
-		-e "s,%NSPR_VERSION%,`nspr-config --version`,g" \
-		-e "s,%NSSUTIL_VERSION%,${VERSION},g" \
 		-e "s,%SOFTOKN_VERSION%,${VERSION},g" \
-		${S}/nss-softokn.pc.in > ${B}/dist/nss-softokn.pc
-
-	sed -e "s,%prefix%,/usr,g" \
-		-e "s,%exec_prefix%,/usr,g" \
-		-e "s,%includedir%,/usr/include/nss," \
-		-e "s,%libdir%,/usr/lib,g" \
-		-e "s,%NSPR_VERSION%,`nspr-config --version`,g" \
-		-e "s,%NSSUTIL_VERSION%,${VERSION},g" \
-		${S}/nss-util.pc.in > ${B}/dist/nss-util.pc
+		${S}/$l.pc.in > ${B}/dist/$l.pc
+	done
 }
 
 src_install() {
@@ -102,7 +114,7 @@ src_install() {
 	dobin CYGWIN*/bin/{cert,cms,crl,mod,pk12}util.exe
 	dobin CYGWIN*/bin/{signtool,signver,ssltap}.exe
 	dobin CYGWIN*/lib/*3.dll
-	dobin nss-config
+	dobin nss-config nss-softokn-config nss-util-config
 
 	insinto /usr/bin
 	doins CYGWIN*/lib/*.chk
@@ -116,6 +128,9 @@ src_install() {
 
 	# https://fedoraproject.org/wiki/Features/SharedSystemCertificates
 	dosym /usr/lib/pkcs11/p11-kit-trust.so /usr/lib/libnssckbi.so
+	# crypto-policies
+	insinto /etc/crypto-policies/local.d
+	doins ${S}/nss-p11-kit.config
 
 	insinto /etc/pki/nssdb
 	# legacy db
